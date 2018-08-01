@@ -1,0 +1,6 @@
+MONGODB_NAME=metrics
+MONGODB_URI=mongodb://user:password13@ds261521.mlab.com:61521/metrics
+RABBITMQ_ADDRESS=localhost
+RABBITMQ_PORT=5672
+FLASK_ADDRESS=localhost
+FLASK_PORT=500
