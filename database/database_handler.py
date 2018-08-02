@@ -13,8 +13,6 @@ class DatabaseHandler(object):
 
         reader = ConfigurationFileReader()
 
-        print(reader.get_mongodb_uri())
-
         self.app.config['MONGODB_NAME'] = reader.get_mongodb_name()
         self.app.config['MONGO_URI'] = reader.get_mongodb_uri()
 
@@ -34,3 +32,14 @@ class DatabaseHandler(object):
         packets = inserter.find({'id': id})
 
         return packets
+
+    def get_all_packets(self):
+        """Returns all packets"""
+        database = PyMongo(self.app)
+        packet_id_list = database.db.node.distinct('ID')
+        packet_info_list = []
+
+        for id in packet_id_list:
+            packet_info_list.append(database.db.node.find({'ID': id}).limit(1))
+
+        return packet_info_list

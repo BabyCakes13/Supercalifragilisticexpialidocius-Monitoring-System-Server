@@ -12,7 +12,6 @@ class ConfigurationFileReader:
         """Contains the path to the config.txt file."""
 
         self.config_path = os.path.dirname(os.path.abspath(__file__))[:-5] + "files\\config.txt"
-        print(self.config_path)
 
     def get_mongodb_name(self):
         """Returns the address on which the rabbitmq server connects. It is localhost by default."""
@@ -29,6 +28,7 @@ class ConfigurationFileReader:
 
         mongodb_uri = re.search(get_mongodb_uri_re(), f_config.read()).group()[12:]
 
+        print(mongodb_uri)
         f_config.close()
         return mongodb_uri
 

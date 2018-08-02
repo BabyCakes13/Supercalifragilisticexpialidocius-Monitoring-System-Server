@@ -1,7 +1,7 @@
 """Module which creates the config.txt file if it does not exist or it's invalid."""
 import os
 import re
-from files.strings import get_configuration_file_form, get_configuration_file_re
+from files.strings import get_configuration_file_form, get_configuration_file_re, get_metrics_file_form
 
 
 class CreateConfiguration:
@@ -14,9 +14,18 @@ class CreateConfiguration:
 
         self.root_path = os.path.dirname(os.path.abspath(__file__))[:-5]
         self.config_path = os.path.join(self.root_path, "files\\config.txt")
+        self.metrics_path = os.path.join(self.root_path, "files\\metrics.txt")
+
+        self.setup_metrics_file()
 
         if self.check_configuration() is False:
             self.setup_configuration_file()
+
+    def setup_metrics_file(self):
+
+        with open(self.metrics_path, "w+") as f_metrics:
+
+            f_metrics.write(get_metrics_file_form())
 
     def setup_configuration_file(self):
         """Creates the config.txt file, which contains the metrics which are possible to monitor.
