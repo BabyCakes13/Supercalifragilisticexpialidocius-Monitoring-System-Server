@@ -29,7 +29,7 @@ class DatabaseHandler(object):
         database = PyMongo(self.app)
         inserter = database.db.node
 
-        packets = inserter.find({'id': id})
+        packets = inserter.find({'ID': id})
 
         return packets
 
@@ -43,3 +43,11 @@ class DatabaseHandler(object):
             packet_info_list.append(database.db.node.find({'ID': id}).limit(1))
 
         return packet_info_list
+
+    def delete_database_id(self, packet):
+        """Deletes he database id"""
+
+        new_packet = packet
+        del new_packet['_id']
+        return new_packet
+

@@ -40,6 +40,16 @@ def packets_route():
     return render_template("all_packets.html", nodes=packets_list)
 
 
+@app.route('/packets/<id>')
+def packets_id(id):
+    """Displays information about a package based on the package ID"""
+    packet_info = database_handler.get_packet_info(str(id))
+
+    for packet in packet_info:
+        packets_new = database_handler.delete_database_id(packet)
+
+    return render_template("packet_information.html", packets=packets_new)
+
 if __name__ == '__main__':
 
     consume_packet_thread = RabbitObjectHandler(app)
