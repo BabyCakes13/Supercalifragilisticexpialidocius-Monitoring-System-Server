@@ -6,6 +6,10 @@
 </head>
 <body>
     <h3>CURRENT SUPPORTED METRICS</h3>
-    {{ metrics }}
+    {% for i in metrics %}
+    <hr>
+    <h4>{{ i }}</h4>
+    <hr>
+    {% endfor %}
 </body>
 </html>

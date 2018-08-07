@@ -1,4 +1,0 @@
-Verify the comments on each function.
-Display information.
-Fix configuration reader: instead of [-13:] - to cut out x chars from beginning, put [x:]
-- put title in each html file

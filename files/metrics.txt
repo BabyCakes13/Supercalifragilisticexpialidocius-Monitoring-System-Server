@@ -1,4 +1,4 @@
-DISK_USAGE
-CPU_PERCENTAGE
-MEMORY_INFO
-CPU_STATS
+Disk_Usage
+Cpu_Percent
+Memory_Info
+Cpu_Stats

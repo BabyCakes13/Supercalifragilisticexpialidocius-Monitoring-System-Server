@@ -1,13 +1,14 @@
-""""""
+"""Module which handles the RabbitMQ connection."""
 from threading import Thread
+import json
+import pika
 from database.database_handler import DatabaseHandler
 from files.strings import get_rabbit_queue
-from files.read_configuration_handler import ConfigurationFileReader
-import pika
-import json
+from files.read_configuration_handler import ReadHandler
 
 
 class RabbitObjectHandler(Thread):
+    """Class which handles the RabbitMQ connection."""
 
     def __init__(self, app):
         """Initialises the connection between RabbitMQ queue and Flask server,
@@ -25,9 +26,11 @@ class RabbitObjectHandler(Thread):
     def handle_connection(self):
         """Handles the connection."""
 
-        reader = ConfigurationFileReader()
+        reader = ReadHandler()
 
-        connection = pika.BlockingConnection(pika.ConnectionParameters(reader.get_rabbitmq_address(), reader.get_rabbitmq_port()))
+        connection = pika.BlockingConnection(
+            pika.ConnectionParameters(
+                reader.get_rabbitmq_address(), reader.get_rabbitmq_port()))
         self.connection_channel = connection.channel()
         self.connection_channel.queue_declare(queue=get_rabbit_queue())
 
@@ -38,10 +41,11 @@ class RabbitObjectHandler(Thread):
         print(body)
 
     def run(self):
-        """Starts the thread which consumes the objects from the RabbitMQ queue."""
+        """Starts the thread which consumes the objects
+         from the RabbitMQ queue."""
 
         self.connection_channel.basic_consume(self.collect_packet,
-                                                queue=get_rabbit_queue(),
-                                                no_ack=True)
+                                              queue=get_rabbit_queue(),
+                                              no_ack=True)
 
         self.connection_channel.start_consuming()

@@ -1,35 +1,38 @@
+"""Handles the connection of flask and database"""
 from flask import Flask
 from flask import render_template
+from flask import request
 from threads.get_objects_from_rabbit import RabbitObjectHandler
 from files.configuration_handler import CreateConfiguration
-from files.read_metrics import read_metrics
-from files.read_configuration_handler import ConfigurationFileReader
+from files.read_configuration_handler import ReadHandler
 from database.database_handler import DatabaseHandler
-from files.strings import get_main_page_html, get_metric_list_html
 
-app = Flask(__name__, template_folder="templates")
-config = CreateConfiguration()
-database_handler = DatabaseHandler(app)
+APP = Flask(__name__, template_folder="templates")
+CONFIG = CreateConfiguration()
+DATABASE_HANDLER = DatabaseHandler(APP)
 
-@app.route('/')
+
+@APP.route('/')
 def main_page_route():
-    """Displays the main page and the types of information you can get the server to display."""
+    """Displays the main page and the types of information
+     you can get the server to display."""
 
     return render_template("main_page.html")
 
 
-@app.route('/current_supported_metrics')
+@APP.route('/current_supported_metrics')
 def current_supported_metrics_route():
     """Displays the currently supported metrics."""
 
-    return render_template("current_supported_metrics.html", metrics=read_metrics())
+    return render_template("current_supported_metrics.html",
+                           metrics=READER.get_supported_metrics())
 
 
-@app.route('/packets')
+@APP.route('/packets')
 def packets_route():
     """Displays information about all the packages in the database."""
 
-    all_packets = database_handler.get_all_packets()
+    all_packets = DATABASE_HANDLER.get_all_packets()
     packets_list = []
 
     for packets in all_packets:
@@ -37,25 +40,64 @@ def packets_route():
             del packet['_id']
             packets_list.append(packet)
 
-    return render_template("all_packets.html", nodes=packets_list)
+    return render_template("all_packets.html", packets=packets_list)
 
 
-@app.route('/packets/<id>')
-def packets_id(id):
+@APP.route('/packets/<packet_id>')
+def packets_id_route(packet_id):
     """Displays information about a package based on the package ID"""
-    packet_info = database_handler.get_packet_info(str(id))
+    packet_info = DATABASE_HANDLER.get_packet_info(str(packet_id))
 
     for packet in packet_info:
-        packets_new = database_handler.delete_database_id(packet)
+        packets_new = DATABASE_HANDLER.delete_database_id(packet)
 
     return render_template("packet_information.html", packets=packets_new)
 
+
+@APP.route('/metrics', methods=['GET'])
+def packets_metrics_route():
+    """Gets the requested metrics and show only
+     that information for all nodes."""
+    metrics = request.args.to_dict().values()
+    node_info_list = []
+
+    if check_metric(metrics) is True:
+
+        cursor_list = DATABASE_HANDLER.get_all_packets()
+
+        for cursor in cursor_list:
+            for cursor_item in cursor:
+
+                temp_dict = {
+                    "ID": cursor_item.get('ID'),
+                }
+
+                for metric in metrics:
+                    temp_dict[metric] = cursor_item.get('%s' % metric)
+
+                node_info_list.append(temp_dict)
+
+    return render_template("packet_information.html", packets=node_info_list)
+
+
+def check_metric(metrics):
+    """Checks whether the argument is part
+    of the current supported metric list."""
+
+    for metric in metrics:
+        is_supported = False
+        for supported in READER.get_supported_metrics():
+            if str(supported) == str(metric):
+                is_supported = True
+
+    return is_supported
+
+
 if __name__ == '__main__':
 
-    consume_packet_thread = RabbitObjectHandler(app)
-    consume_packet_thread.start()
+    CONSUME_PACKET = RabbitObjectHandler(APP)
+    CONSUME_PACKET.start()
 
-    reader = ConfigurationFileReader()
+    READER = ReadHandler()
 
-    app.run(reader.get_flask_address(),reader.get_flask_port())
-
+    APP.run(READER.get_flask_address(), READER.get_flask_port())

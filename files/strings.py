@@ -1,20 +1,21 @@
 """Module which contains all strings used in the project"""
 
-from files.read_metrics import read_metrics
 
 def get_metrics_file_form():
+    """Returns the current supported metrics."""
 
-    return "DISK_USAGE" \
-        "\nCPU_PERCENTAGE" \
-        "\nMEMORY_INFO" \
-        "\nCPU_STATS"
+    return "Disk_Usage" \
+        "\nCpu_Percent" \
+        "\nMemory_Info" \
+        "\nCpu_Stats"
 
 
 def get_configuration_file_form():
     """Contains the form of the configuration file of the server."""
 
     return "MONGODB_NAME=metrics" \
-        "\nMONGODB_URI=mongodb://user:password13@ds261521.mlab.com:61521/metrics" \
+        "\nMONGODB_URI=mongodb://user:password13@ds261521.mlab.com:" \
+           "61521/metrics" \
         "\nRABBITMQ_ADDRESS=localhost" \
         "\nRABBITMQ_PORT=5672" \
         "\nFLASK_ADDRESS=localhost" \
@@ -22,10 +23,11 @@ def get_configuration_file_form():
 
 
 def get_configuration_file_re():
-    """Contain the regex expression to check the validity of the configuration file"""
+    """Contain the regex expression to check the validity
+     of the configuration file"""
 
-    return r"MONGODB_NAME=(.)" \
-        r"\nMONGODB_URI=(.)" \
+    return r"MONGODB_NAME=(re.DOTALL)" \
+        r"\nMONGODB_URI=()" \
         r"\nRABBITMQ_ADDRESS=(localhost)" \
         r"\nRABBITMQ_PORT=(\d{1,5})" \
         r"\nFLASK_ADDRESS=(localhost)" \
@@ -69,35 +71,6 @@ def get_flask_port():
 
 
 def get_rabbit_queue():
+    """Contains the name of the rabbitmq queue."""
 
     return "metrics_queue"
-
-
-def get_main_page_html():
-
-    return "<h2>INSTRUCTIONS</h2>" \
-        "<hr>" \
-        "<h4>SEARCH BY PACKAGE ID</h4>" \
-        "<h4>LIST ALL PACKAGES FOR A SPECIFIED METRIC</h4>" \
-        "<h4>LIST ALL AVAILABLE METRICS: /metric_list</h4>" \
-        "<h4>LIST LAST UPDATE OF ALL PACKAGES</h4>"
-
-
-def get_metric_list_html():
-
-    metrics_reader = read_metrics()
-
-    return '<!DOCTYPE templates>' \
-        '<templates lang="en">' \
-        '<head><meta charset="UTF-8">' \
-        '<title>METRIC LIST</title>' \
-        '</head>' \
-        '<body>' \
-        '<h4>CURRENT SUPPORTED METRICS</h4>' \
-        + str(metrics_reader) + \
-        '</body>' \
-        '</templates>'
-
-
-
-

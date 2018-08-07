@@ -5,7 +5,8 @@ from setuptools import find_packages
 setup(name='Supercalifragilisticexpialidocius Monitoring System Server',
       version='1.0',
       description="Application which monitors metrics on PC - Server Side",
-      url='https://github.com/BabyCakes13/Supercalifragilisticexpialidocius-Monitoring-System-Client.git',
+      url='https://github.com/BabyCakes13/'
+          'Supercalifragilisticexpialidocius-Monitoring-System-Server.git',
       author='Maria Minerva Vonica',
       author_email='maria.vonica98@gmail.com',
       packages=find_packages())
